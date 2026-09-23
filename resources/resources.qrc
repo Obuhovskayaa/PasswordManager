@@ -1,0 +1,8 @@
+
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <file>icons/copy-outline.svg</file>
+    <file>icons/copy.svg</file>
+    <file>icons/return.svg</file>
+</qresource>
+</RCC>
