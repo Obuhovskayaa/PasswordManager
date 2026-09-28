@@ -8,9 +8,9 @@
 
 class DatabaseManager {
 public:
-    
     static DatabaseManager& instance();
-    bool connectToDatabase();
+    
+    bool connectToDatabase(const QString& masterKey);
     QList<Entry> getAllEntries();
     bool addEntry(Entry& e);
     bool updateEntryField(int id, const QString &columnName, const QString &newValue);
@@ -19,6 +19,7 @@ public:
 
 private:
     DatabaseManager(){}
+    QString m_masterKey;
 };
 
 #endif

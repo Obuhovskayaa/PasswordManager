@@ -1,12 +1,14 @@
 #include "DatabaseManager.hpp"
 #include <QDebug>
+#include "CryptoManager.hpp"
 
 DatabaseManager& DatabaseManager::instance() {
     static DatabaseManager inst;
     return inst;  
 }
 
-bool DatabaseManager::connectToDatabase() {
+bool DatabaseManager::connectToDatabase(const QString& masterKey) {
+    m_masterKey = masterKey;
     if (QSqlDatabase::contains("qt_sql_default_connection")) {
             return true;
         }
@@ -33,11 +35,14 @@ QList<Entry> DatabaseManager::getAllEntries() {
     QSqlQuery query("SELECT id, service, login, password, note FROM passwords");
     while (query.next()) {
         Entry e;
+        
         e.setId(query.value("id").toInt());
-        e.setName(query.value("service").toString());
-        e.setLogin(query.value("login").toString());
-        e.setPassword(query.value("password").toString());
-        e.setNote(query.value("note").toString());
+
+        e.setName(CryptoManager::decrypt(query.value("service").toString(), m_masterKey));
+        e.setLogin(CryptoManager::decrypt(query.value("login").toString(), m_masterKey));
+        e.setPassword(CryptoManager::decrypt(query.value("password").toString(), m_masterKey));
+        e.setNote(CryptoManager::decrypt(query.value("note").toString(), m_masterKey));
+
         entries.append(e);
     }
     return entries;
@@ -49,10 +54,10 @@ bool DatabaseManager::addEntry(Entry& e) {
         "INSERT INTO passwords (service, login, password, note)"
         "VALUES (:service, :login, :password, :note)"
     );
-    query.bindValue(":service", e.name());
-    query.bindValue(":login", e.login());
-    query.bindValue(":password", e.password());
-    query.bindValue(":note", e.note());
+    query.bindValue(":service", CryptoManager::encrypt(e.name(), m_masterKey));
+    query.bindValue(":login", CryptoManager::encrypt(e.login(), m_masterKey));
+    query.bindValue(":password", CryptoManager::encrypt(e.password(), m_masterKey));
+    query.bindValue(":note", CryptoManager::encrypt(e.note(), m_masterKey));
 
     if (query.exec()) {
         e.setId(query.lastInsertId().toInt());
@@ -63,11 +68,18 @@ bool DatabaseManager::addEntry(Entry& e) {
 
 bool DatabaseManager::updateEntryField(int id, const QString &columnName, const QString &newValue) {
     QSqlQuery query;
+
+    qDebug() << "Update field: ";
+    qDebug() << "Column:" << columnName << "| Original Value:" << newValue;
+    QString encryptedValue = CryptoManager::encrypt(newValue, m_masterKey);
+
+    qDebug() << "Encrypted (Base64):" << encryptedValue;
+
     QString queryString = QString("UPDATE passwords SET %1 = :value WHERE id = :id")
         .arg(columnName);
 
     query.prepare(queryString);
-    query.bindValue(":value", newValue);
+    query.bindValue(":value", encryptedValue);
     query.bindValue(":id", id);
 
     return query.exec();

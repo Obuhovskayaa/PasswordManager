@@ -13,7 +13,7 @@ class CopyDelegate;
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(const QString& masterKey, QWidget *parent = nullptr);
     void setPassword(const QString password);
     
 protected:
@@ -23,6 +23,7 @@ private slots:
     void onRemoveClicked();
 
 private:
+    const QString& m_masterKey;
     void setupUi();
     void setupConnections();
     int m_closeCount = 0;

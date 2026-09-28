@@ -19,8 +19,8 @@
 #include <QMenu>
 #include <QAction>
 
-MainWindow::MainWindow(QWidget *parent) 
-    : QMainWindow(parent)
+MainWindow::MainWindow(const QString& masterKey, QWidget *parent) 
+    : QMainWindow(parent), m_masterKey(masterKey)
 {
     setupUi();
     setupConnections();
@@ -31,7 +31,7 @@ void MainWindow::setupUi() {
     QWidget *central = new QWidget();
     setCentralWidget(central);
 
-    if (!DatabaseManager::instance().connectToDatabase()) {
+    if (!DatabaseManager::instance().connectToDatabase(m_masterKey)) {
         QMessageBox::critical(nullptr, "Error", "Could not open database");
         return;
     }

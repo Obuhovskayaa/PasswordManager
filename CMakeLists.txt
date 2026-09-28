@@ -17,6 +17,7 @@ set(SOURCES
     src/CopyDelegate.cpp
     src/DatabaseManager.cpp
     src/SelectUserDialog.cpp
+    src/CryptoManager.cpp
     resources/resources.qrc
     Qt-AES/qaesencryption.cpp
     
@@ -31,6 +32,7 @@ set(HEADERS
     include/Utils.hpp
     include/DatabaseManager.hpp
     include/SelectUserDialog.hpp
+    include/CryptoManager.hpp
     Qt-AES/qaesencryption.h
 )
 
