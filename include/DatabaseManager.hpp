@@ -9,7 +9,6 @@
 class DatabaseManager {
 public:
     static DatabaseManager& instance();
-    
     bool connectToDatabase(const QString& masterKey);
     QList<Entry> getAllEntries();
     bool addEntry(Entry& e);

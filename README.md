@@ -8,6 +8,8 @@
 
 - **Memory security (runtime leaks)**: currently, master keys and decrypted passwords are processed using standard `QString` containers. This results in data remaining in unencrypted form in RAM during program execution, and copies of it may be saved in the system swap file. In future updates, we will replace them with secure memory buffers that zero out confidential data immediately after use and prevent page swapping.
 
+- **Cryptographic Restrictions**: The current implementation is a basic prototype and does not provide advanced security measures. In the future, a cryptosystem will be introduced that includes Argon2id/PBKDF2 for obtaining keys, unique salts, as well as switching from AES-CBC mode to AES-GCM mode (authenticated encryption).
+
 ## TODO
 
 - **Protected data buffers during execution**: preventing leaks of decrypted data by using special protected containers during program execution.
